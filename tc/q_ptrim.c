@@ -55,7 +55,7 @@ static int ptrim_print_opt(const struct qdisc_util *qu, FILE *f, struct rtattr *
 	if (RTA_PAYLOAD(opt)  < sizeof(*qopt))
 		return -1;
 	qopt = RTA_DATA(opt);
-	if (strcmp(qu->id, "bfifo") == 0)
+	if (strcmp(qu->id, "ptrim") == 0)
 		print_size(PRINT_ANY, "limit", "limit %s", qopt->limit);
 	else
 		print_uint(PRINT_ANY, "limit", "limit %up", qopt->limit);
