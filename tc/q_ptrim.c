@@ -55,15 +55,12 @@ static int ptrim_print_opt(const struct qdisc_util *qu, FILE *f, struct rtattr *
 	if (RTA_PAYLOAD(opt)  < sizeof(*qopt))
 		return -1;
 	qopt = RTA_DATA(opt);
-	if (strcmp(qu->id, "bfifo") == 0)
-		print_size(PRINT_ANY, "limit", "limit %s", qopt->limit);
-	else
-		print_uint(PRINT_ANY, "limit", "limit %up", qopt->limit);
+	print_uint(PRINT_ANY, "limit", "limit %up", qopt->limit);
 	return 0;
 }
 
 struct qdisc_util ptrim_qdisc_util = {
-    .id = "ptrim",
-    .parse_qopt = ptrim_parse_opt,
-    .print_qopt = ptrim_print_opt,
+	.id = "ptrim",
+	.parse_qopt = ptrim_parse_opt,
+	.print_qopt = ptrim_print_opt,
 };
