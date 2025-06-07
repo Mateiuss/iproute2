@@ -10,6 +10,23 @@
 #include "utils.h"
 #include "tc_util.h"
 
+struct tc_ptrim_qopt {
+	uint8_t limit; //  limit for trimming
+};
+
+static int _get_size(uint8_t *size, const char *str)
+{
+	char *endptr;
+	long val = strtol(str, &endptr, 10);
+
+	if (*endptr != '\0' || val < 0 || val > UINT8_MAX)
+		return -1;
+
+	*size = (uint8_t)val;
+
+	return 0;
+}
+
 static void explain(void)
 {
 	fprintf(stderr, "Usage: ... ptrim [ limit NUMBER ]\n");
@@ -19,12 +36,12 @@ static int ptrim_parse_opt(const struct qdisc_util *qu, int argc, char **argv,
 			  struct nlmsghdr *n, const char *dev)
 {
 	int ok = 0;
-	struct tc_fifo_qopt opt = {};
+	struct tc_ptrim_qopt opt = {};
 
 	while (argc > 0) {
 		if (strcmp(*argv, "limit") == 0) {
 			NEXT_ARG();
-			if (get_size(&opt.limit, *argv)) {
+			if (_get_size(&opt.limit, *argv)) {
 				fprintf(stderr, "%s: Illegal value for \"limit\": \"%s\"\n", qu->id, *argv);
 				return -1;
 			}
@@ -47,15 +64,16 @@ static int ptrim_parse_opt(const struct qdisc_util *qu, int argc, char **argv,
 
 static int ptrim_print_opt(const struct qdisc_util *qu, FILE *f, struct rtattr *opt)
 {
-	struct tc_fifo_qopt *qopt;
+	struct tc_ptrim_qopt *qopt;
 
 	if (opt == NULL)
 		return 0;
 
 	if (RTA_PAYLOAD(opt)  < sizeof(*qopt))
 		return -1;
+
 	qopt = RTA_DATA(opt);
-	print_uint(PRINT_ANY, "limit", "limit %up", qopt->limit);
+	print_uint(PRINT_ANY, "limit", "limit %u%%", qopt->limit);
 	return 0;
 }
 

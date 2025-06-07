@@ -8,6 +8,7 @@ config.*
 *~
 \#*#
 compile_commands.json
+.vscode
 
 # cscope
 cscope.*
