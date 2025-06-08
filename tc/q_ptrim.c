@@ -11,7 +11,11 @@
 #include "tc_util.h"
 
 struct tc_ptrim_qopt {
-	uint8_t limit; //  limit for trimming
+	/* parameters */
+	uint8_t limit;
+
+	/* statistics */
+	uint64_t trimmed_packets;
 };
 
 static int _get_size(uint8_t *size, const char *str)
@@ -74,6 +78,8 @@ static int ptrim_print_opt(const struct qdisc_util *qu, FILE *f, struct rtattr *
 
 	qopt = RTA_DATA(opt);
 	print_uint(PRINT_ANY, "limit", "limit %u%%", qopt->limit);
+	print_u64(PRINT_ANY, "trimmed_packets", " trimmed %llu",
+			qopt->trimmed_packets);
 	return 0;
 }
 
