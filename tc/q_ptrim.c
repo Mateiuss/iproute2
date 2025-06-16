@@ -13,6 +13,7 @@
 struct tc_ptrim_qopt {
 	/* parameters */
 	uint8_t limit;
+	uint8_t rr_max_count;
 
 	/* statistics */
 	uint64_t trimmed_packets;
@@ -33,7 +34,7 @@ static int _get_size(uint8_t *size, const char *str)
 
 static void explain(void)
 {
-	fprintf(stderr, "Usage: ... ptrim [ limit NUMBER ]\n");
+	fprintf(stderr, "Usage: ... ptrim [ limit NUMBER ] [ rr_max_count NUMBER ]\n");
 }
 
 static int ptrim_parse_opt(const struct qdisc_util *qu, int argc, char **argv,
@@ -47,6 +48,13 @@ static int ptrim_parse_opt(const struct qdisc_util *qu, int argc, char **argv,
 			NEXT_ARG();
 			if (_get_size(&opt.limit, *argv)) {
 				fprintf(stderr, "%s: Illegal value for \"limit\": \"%s\"\n", qu->id, *argv);
+				return -1;
+			}
+			ok++;
+		} else if (strcmp(*argv, "rr_max_count") == 0) { 
+			NEXT_ARG();
+			if (_get_size(&opt.rr_max_count, *argv)) {
+				fprintf(stderr, "%s: Illegal value for \"rr_max_count\": \"%s\"\n", qu->id, *argv);
 				return -1;
 			}
 			ok++;
@@ -80,6 +88,7 @@ static int ptrim_print_opt(const struct qdisc_util *qu, FILE *f, struct rtattr *
 	print_uint(PRINT_ANY, "limit", "limit %u%%", qopt->limit);
 	print_u64(PRINT_ANY, "trimmed_packets", " trimmed %llu",
 			qopt->trimmed_packets);
+	print_uint(PRINT_ANY, "rr_max_count", " rr_max_count %u", qopt->rr_max_count);
 	return 0;
 }
 
